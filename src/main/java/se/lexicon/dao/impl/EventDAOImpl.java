@@ -26,7 +26,9 @@ public class EventDAOImpl implements EventDAO {
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows > 0){
                 try(ResultSet resultSet = preparedStatement.getGeneratedKeys()){
-                    event.setId(resultSet.getInt(1));
+                    if(resultSet.next()) {
+                        event.setId(resultSet.getInt(1));
+                    }
                 }
             }
         }catch (SQLException e){
@@ -41,10 +43,10 @@ public class EventDAOImpl implements EventDAO {
         try(PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM event WHERE calendar_id = ?")){
             preparedStatement.setInt(1, calendarId);
             try(ResultSet resultSet = preparedStatement.executeQuery()){
-                if (resultSet.next()){
+                while (resultSet.next()){
                     Event event = new Event(
                             resultSet.getInt("id"),
-                            resultSet.getInt("calendarId"),
+                            resultSet.getInt("calendar_id"),
                             resultSet.getString("title"),
                             resultSet.getString("description"),
                             resultSet.getTimestamp("date_time").toLocalDateTime()
@@ -60,13 +62,13 @@ public class EventDAOImpl implements EventDAO {
 
     @Override
     public void update(Event event) {
-        String sql = "UPDATE event set id= ?, calendar_id= ?, title= ?, description= ?, date_time= ? WHERE id = ?";
+        String sql = "UPDATE event set  calendar_id= ?, title= ?, description= ?, date_time= ? WHERE id = ?";
         try(PreparedStatement preparedStatement = connection.prepareStatement(sql)){
-            preparedStatement.setInt(1, event.getId());
-            preparedStatement.setInt(2, event.getCalendarId());
-            preparedStatement.setString(3, event.getTitle());
-            preparedStatement.setString(4, event.getDescription());
-            preparedStatement.setTimestamp(5, Timestamp.valueOf(event.getDateTime()));
+            preparedStatement.setInt(1, event.getCalendarId());
+            preparedStatement.setString(2, event.getTitle());
+            preparedStatement.setString(3, event.getDescription());
+            preparedStatement.setTimestamp(4, Timestamp.valueOf(event.getDateTime()));
+            preparedStatement.setInt(5,event.getId());
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows > 0 ){
                 System.out.println("Update done ");
@@ -88,5 +90,27 @@ public class EventDAOImpl implements EventDAO {
         } catch (SQLException e){
             System.out.println("Error trying to delete the event " + e.getMessage());
         }
+    }
+
+    @Override
+    public Event findById(int id) {
+        try(PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM event WHERE id = ?")){
+            preparedStatement.setInt(1, id);
+            try(ResultSet resultSet = preparedStatement.executeQuery()){
+                if (resultSet.next()){
+                    return new Event(
+                            resultSet.getInt("id"),
+                            resultSet.getInt("calendar_id"),
+                            resultSet.getString("title"),
+                            resultSet.getString("description"),
+                            resultSet.getTimestamp("date_time").toLocalDateTime()
+                    );
+                }
+            }
+        } catch (SQLException e){
+            System.out.println("Error trying to find the event " + e.getMessage());
+        }
+
+        return null;
     }
 }

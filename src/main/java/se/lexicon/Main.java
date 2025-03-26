@@ -4,17 +4,20 @@ import se.lexicon.dao.impl.EventDAOImpl;
 import se.lexicon.dao.impl.MyCalendarDAOImpl;
 import se.lexicon.dao.impl.PersonDAOImpl;
 import se.lexicon.db.DatabaseManager;
+import se.lexicon.model.Event;
 import se.lexicon.model.MyCalendar;
 import se.lexicon.model.Person;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        // TODO: Needs completion
         try(Connection connection = DatabaseManager.getConnection()){
             PersonDAOImpl personDAO = new PersonDAOImpl(connection);
             MyCalendarDAOImpl myCalendarDAO = new MyCalendarDAOImpl(connection);
@@ -88,6 +91,36 @@ public class Main {
             myCalendarDAO.delete(7);
             myCalendarDAO.delete(8);
             myCalendarDAO.delete(9);  */
+
+            //*************SAVE event ***********************
+           /* Event event1 = new Event(10,"Meeting with customers", "Discussion about the needs", LocalDateTime.of(2025,4,17,9,15));
+            Event event2 = new Event(11,"Match against JC", "Court 6", LocalDateTime.of(2025,4,17,17,00));
+            Event event3 = new Event(11,"Match against Ricardo", "Court 5", LocalDateTime.of(2025,4,22,19,00));
+            Event event4 = new Event(12,"Top secret", "Playing in the forest", LocalDateTime.of(2025,4,7,8,00));
+            Event event5 = new Event(13,"Date with Lisa", "Asian from tinder", LocalDateTime.of(2025,4,5,19,45));
+            Event event6 = new Event(15,"London", "Monthly meeting", LocalDateTime.of(2025,4,26,7,15));
+            Event event7 = new Event(17,"Hernan birthday", "Big party party", LocalDateTime.of(2025,8,30,14,00));
+            eventDAO.save(event1);
+            eventDAO.save(event2);
+            eventDAO.save(event3);
+            eventDAO.save(event4);
+            eventDAO.save(event5);
+            eventDAO.save(event6);
+            eventDAO.save(event7);  */
+
+            //*************DELETE event ********************
+            //eventDAO.delete(3);
+
+            //************FIND ALL BY CALENDER EVENT *******
+            List<Event> eventList = new ArrayList<>();
+            eventList = eventDAO.findAllByCalendarId(11);
+            eventList.forEach(element -> System.out.println(element.toString()));
+
+
+            //***********UPDATE event **********************
+            /*Event eventToUpdate = eventDAO.findById(9);
+            eventToUpdate.setDescription("party");
+            eventDAO.update(eventToUpdate);  */
 
         }catch (SQLException e) {
             System.out.println("Error occurred trying to access the database " + e.getMessage());

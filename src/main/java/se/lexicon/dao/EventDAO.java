@@ -8,6 +8,7 @@ import java.util.Optional;
 // Interface for Event DAO
 public interface EventDAO {
     Event save(Event event);
+    Event findById(int id);
     List<Event> findAllByCalendarId(int calendarId);
     void update(Event event);
     void delete(int id);

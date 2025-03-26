@@ -48,6 +48,7 @@ public class MyCalendarDAOImpl implements MyCalendarDAO {
                             resultSet.getString("name"),
                             resultSet.getString("description")
                     );
+
                     return Optional.of(calendar);
                 }
             }
